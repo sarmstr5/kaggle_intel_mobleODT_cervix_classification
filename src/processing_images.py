@@ -18,16 +18,14 @@ def show_img(abspath_img):
     matplotlib.pyplot.imshow(sub_func_load_img(abspath_img))
     matplotlib.pyplot.show()
 
-
-# Unify sidelong images into vertically long images
+# Orient images to be portriate
 def orient_img(img):
     if img.shape[0] >= img.shape[1]:
         return img
     else:
         return np.rot90(img)
 
-
-
+# make all images same size
 def resize_img_same_ratio(img):
     if img.shape[0] / 640.0 >= img.shape[1] / 480.0:
         # (640, *, 3)
@@ -37,6 +35,7 @@ def resize_img_same_ratio(img):
         img_resized = cv2.resize(img, (480, int(480.0 * img.shape[0] / img.shape[1]))) 
     return img_resized
 
+# fill in blank space with black
 def fill_img(img):
     if img.shape[0] == 640:
         int_resize_1 = img.shape[1]
@@ -59,7 +58,6 @@ def fill_img(img):
 
     return img_filled
 
-
 def process_img(img_fn, rgb=False):
     if rgb:
         img = load_rgb_img(img_fn)
@@ -68,6 +66,20 @@ def process_img(img_fn, rgb=False):
     img = rotate_img(img)
     img = resize_img_same_ratio(img)
     img = fill_img(img)
+    return img
+
+def save_files(org_fn, img):
+    fn = '~/kaggle_intel_mobileODT_cervix_classification/data'
+    fn_segments = org_fn.split('/')
+    # test files dont have a type dir
+    if fn_segments[-2] == 'test':
+        for seg in fn_segments[-2:]:
+            fn = os.path.join(fn, seg)
+    else:
+        for seg in fn_segments[-3:]:
+            fn = os.path.join(fn, seg)
+    print(fn)
+    cv2.imwrite(fn, img)
 
 def main():
     print(os.listdir())

@@ -1,5 +1,5 @@
 import platform
-import os
+import os, pickle
 import pandas as pd
 
 
@@ -45,25 +45,38 @@ def get_list_abspath_img(abspath_dataset_dir):
     list_abspath_img.sort()
     return list_abspath_img
 
-def get_fn_df():
+def save_dirs(dir, dir_list):
+    with open(dir, 'wb') as file:
+        pickle.dump(dir_list, file)
 
-    abspath_dataset_dir_train_1, abspath_dataset_dir_train_2,
-    abspath_dataset_dir_train_3, abspath_dataset_dir_test,
-    abspath_dataset_dir_add_1, abspath_dataset_dir_add_2,
-    abspath_dataset_dir_add_3 = get_file_paths()
+def save_img_dirs():
+#    dir = '~/kaggle_intel_mobileODT_cervix_classification/'
+    dir = os.path.join(os.pardir, 'data/')
+
+    dir_train_1, dir_train_2, dir_train_3, dir_test, dir_add_1, dir_add_2, dir_add_3 = get_file_paths()
+    print('got list dirs')
     
-    list_abspath_img_train_1 = get_list_abspath_img(abspath_dataset_dir_train_1)
-    list_abspath_img_train_2 = get_list_abspath_img(abspath_dataset_dir_train_2)
-    list_abspath_img_train_3 = get_list_abspath_img(abspath_dataset_dir_train_3)
-    list_abspath_img_train   = list_abspath_img_train_1 + list_abspath_img_train_2 + list_abspath_img_train_3
+    list_abspath_img_train_1 = get_list_abspath_img(dir_train_1)
+    list_abspath_img_train_2 = get_list_abspath_img(dir_train_2)
+    list_abspath_img_train_3 = get_list_abspath_img(dir_train_3)
+    train_lists  = list_abspath_img_train_1 + list_abspath_img_train_2 + list_abspath_img_train_3
+    save_dirs(os.path.join(dir,'train.p'), train_lists)
+    #save_dirs('train.p', train_lists)
+    print('saved train dirs')
 
-    list_abspath_img_test    = get_list_abspath_img(abspath_dataset_dir_test)
+    test_list = get_list_abspath_img(dir_test)
+    save_dirs(os.path.join(dir,'test.p'), test_list)
+    print('saved test dirs')
 
-    list_abspath_img_add_1   = get_list_abspath_img(abspath_dataset_dir_add_1)
-    list_abspath_img_add_2   = get_list_abspath_img(abspath_dataset_dir_add_2)
-    list_abspath_img_add_3   = get_list_abspath_img(abspath_dataset_dir_add_3)
-    list_abspath_img_add     = list_abspath_img_add_1   + list_abspath_img_add_2   + list_abspath_img_add_3
+    list_abspath_img_add_1   = get_list_abspath_img(dir_add_1)
+    list_abspath_img_add_2   = get_list_abspath_img(dir_add_2)
+    list_abspath_img_add_3   = get_list_abspath_img(dir_add_3)
+    add_lists = list_abspath_img_add_1   + list_abspath_img_add_2   + list_abspath_img_add_3
+    save_dirs(os.path.join(dir,'additionals.p'), add_lists)
+    print('saved additional dirs')
 
+# currently doesnt work
+def create_count_df():
     # 0: Type_1, 1: Type_2, 2: Type_3
     list_answer_train        = [0] * len(list_abspath_img_train_1) + [1] * len(list_abspath_img_train_2) + [2] * len(list_abspath_img_train_3)
     list_answer_add          = [0] * len(list_abspath_img_add_1) + [1] * len(list_abspath_img_add_2) + [2] * len(list_abspath_img_add_3)
@@ -81,17 +94,12 @@ def get_fn_df():
                     len(list_abspath_img_add), len(list_abspath_img_train) +
                     len(list_abspath_img_test) + len(list_abspath_img_add)]
     # counting number of image files
-    return pd.DataFrame(pandas_data, index=pandas_index, columns=pandas_columns)
-
-def main():
-
-    df = get_fn_df()
-    # show type ratios
+    df = pd.DataFrame(pandas_data, index=pandas_index, columns=pandas_columns)
     pandas_columns = ['Type_1', 'Type_2', 'Type_3']
     pandas_index   = ['train', 'test', 'add']
 
     ratio_train    = [x / len(list_abspath_img_train) for x in
-                      [len(list_abspath_img_train_1),
+                     [len(list_abspath_img_train_1),
                        len(list_abspath_img_train_2),
                        len(list_abspath_img_train_3)]]
     ratio_test     = ['?', '?', '?']
@@ -99,10 +107,14 @@ def main():
                       [len(list_abspath_img_add_1), len(list_abspath_img_add_2),
                        len(list_abspath_img_add_3)]]
 
+    # show type ratios
     pandas_data    = [ratio_train, ratio_test, ratio_add]
 
     df2 = pd.DataFrame(pandas_data, index = pandas_index, columns = pandas_columns)
     print(df2)
+
+def main():
+    save_img_dirs()
 
 if __name__ == '__main__':
     main()
