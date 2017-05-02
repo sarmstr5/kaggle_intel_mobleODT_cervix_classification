@@ -1,2 +1,3 @@
 # ignore vim swap files
 *.py.sw*
+*__pycache__*
