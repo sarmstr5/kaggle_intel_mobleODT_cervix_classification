@@ -60,10 +60,10 @@ def fill_img(img):
 
     return img_filled
 
-# normalize pixel intesity to account for shadows and intesity variability within photo
+# normalize pixel intesity to account for shadows and strangeness within photo
 def normalize_img(img):
     img_data = img.astype('float32')
-    return img_data / 255  #255 comes from RBG format
+    return imgdata / 255  #255 comes from RBG format
 
 # worker function that does all the steps
 def process_img(img_fn, rgb=True):
@@ -96,34 +96,18 @@ def test_function(img_path):
     plt.imshow(orient_img(img))
     plt.show()
 
-def process_images_parallel(fn):
-    dirs_df_dir = '~/kaggle_code/data/'
-    img_df = pd.read_csv(fn, header=0)
-    img_paths = img_df['paths'].head()
-    arr = processing_helper(img_paths)
-    return arr
-
 
 def main():
     print(os.listdir())
     testing = False
-    data_set = 'train'
     if 'c001' in platform.node():
-        dirs_df_dir = '~/kaggle_code/data/'
-        print('in colfax cluster')
+        print('in if')
         if testing:
             img_path = '/data/kaggle/test/5.jpg'
             test_function(img_path)
         else:
-            files = ('train', 'test', 'additionals')
-            for file in files:
-                img_df = pd.read_csv(dirs_df_dir+file+'.csv', header=0)
-                print('created df')
-                img_paths = img_df['paths']
-                print('running processing')
-                arr = processing_helper(img_paths)
-                print('saving fle')
-                np.save(dirs_df_dir+file+'_processed',arr)
+            img_paths = ('/data/kaggle/test/2.jpg', '/data/kaggle/test/5.jpg')
+            processing_helper(img_paths)
 
     else:
         print("What are you doing out of the cluster?!")

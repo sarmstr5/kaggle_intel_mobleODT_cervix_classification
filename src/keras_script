@@ -1,0 +1,9 @@
+ # PBS -N
+ cd ~/kaggle_code/
+ echo Starting calculation
+ ./starting_with_keras.py 
+ echo End of calculation
+    
+    
+    
+    

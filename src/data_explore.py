@@ -76,13 +76,13 @@ def save_img_dirs():
     t_dict = {'paths': pd.Series(train_lists),
               'labels':pd.Series(train_labels)}
     train_df = pd.DataFrame(t_dict)
-    save_dirs(os.path.join(dir,'train.csv'), train_lists, 'df')
+    save_dirs(os.path.join(dir,'train.csv'), train_df, 'df')
     print('saved train dirs')
 
 #   Create/Save test df
     test_list = get_list_abspath_img(dir_test)
     test_df = pd.DataFrame({'paths' : pd.Series(test_list)})
-    save_dirs(os.path.join(dir,'test.csv'), test_list, 'df')
+    save_dirs(os.path.join(dir,'test.csv'), test_df, 'df')
     print('saved test dirs')
 
 #   Create/Save addtionals df
@@ -97,7 +97,7 @@ def save_img_dirs():
     add_dict = {'paths': pd.Series(add_lists),
               'labels':pd.Series(add_labels)}
     add_df = pd.DataFrame(add_dict)
-    save_dirs(os.path.join(dir,'additionals.csv'), add_d, 'df')
+    save_dirs(os.path.join(dir,'additionals.csv'), add_df, 'df')
     print('saved additional dirs')
 
 # currently doesnt work
