@@ -85,8 +85,6 @@ def process_data():
 
 # Start your neural network high performance engines
 
-
-
 def create_model(opt_='adamax'):
     model = Sequential()
     model.add(Convolution2D(4, 3, 3, activation='relu', dim_ordering='th', input_shape=(3, 32, 32))) #use input_shape=(3, 64, 64)
@@ -104,30 +102,41 @@ def create_model(opt_='adamax'):
     return model
 
 def main():
+    process_run = False
+    model_run = True
     print(cpu_count())
-    process_data()
-    K.set_image_dim_ordering('th')
-    K.set_floatx('float32')
-
     np.random.seed(17)
 
-    train_data = np.load('train.npy')
-    train_target = np.load('train_target.npy')
+    if process_run:
+        process_data()
+    #    K.set_image_dim_ordering('th')
 
-    x_train,x_val_train,y_train,y_val_train = train_test_split(train_data,train_target,test_size=0.4, random_state=17)
-    datagen = ImageDataGenerator(rotation_range=0.3, zoom_range=0.3)
-    datagen.fit(train_data)
+    if model_run:
+        # read in data
+        train_data = np.load('train.npy')
+        train_target = np.load('train_target.npy')
 
-    model = create_model()
-    model.fit_generator(datagen.flow(x_train,y_train, batch_size=15, shuffle=True), nb_epoch=200, samples_per_epoch=len(x_train), verbose=20, validation_data=(x_val_train, y_val_train))
+        # split data
+        x_train,x_val_train,y_train,y_val_train = train_test_split(train_data,train_target,test_size=0.4, random_state=17)
 
-    test_data = np.load('test.npy')
-    test_id = np.load('test_id.npy')
+        # Image preprocessing, rotating images and performing random zooms
+        datagen = ImageDataGenerator(rotation_range=0.9, zoom_range=0.3)
+        datagen.fit(train_data)
 
-    pred = model.predict_proba(test_data)
-    df = pd.DataFrame(pred, columns=['Type_1','Type_2','Type_3'])
-    df['image_name'] = test_id
-    df.to_csv('~/kaggle_intel_mobileODT_cervix_classification/submission.csv', index=False)
+        # Create Image model
+        K.set_floatx('float32')
+        model = create_model()
+        model.fit_generator(datagen.flow(x_train,y_train, batch_size=15, shuffle=True), nb_epoch=200, samples_per_epoch=len(x_train), verbose=20, validation_data=(x_val_train, y_val_train))
+
+        # Load processed data
+        test_data = np.load('test.npy')
+        test_id = np.load('test_id.npy')
+
+        # run classification
+        pred = model.predict_proba(test_data)
+        df = pd.DataFrame(pred, columns=['Type_1','Type_2','Type_3'])
+        df['image_name'] = test_id
+        df.to_csv('~/kaggle_intel_mobileODT_cervix_classification/submission.csv', index=False)
 
 if __name__=='__main__':
     main()
