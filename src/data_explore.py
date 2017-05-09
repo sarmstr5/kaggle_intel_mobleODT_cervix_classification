@@ -45,34 +45,59 @@ def get_list_abspath_img(abspath_dataset_dir):
     list_abspath_img.sort()
     return list_abspath_img
 
-def save_dirs(dir, dir_list):
-    with open(dir, 'wb') as file:
-        pickle.dump(dir_list, file)
+def save_dirs(dir, img_dirs, type='df'):
+    if type == 'df':
+        img_dirs.to_csv(dir, index=False)
+    else:
+        with open(dir, 'wb') as file:
+            pickle.dump(dir_list, file)
+
 
 def save_img_dirs():
-#    dir = '~/kaggle_intel_mobileODT_cervix_classification/'
+#    dir = '~/kaggle_code/'
+#   Location of the colfax cluster data
     dir = os.path.join(os.pardir, 'data/')
 
+#   returns the directories of the data files
     dir_train_1, dir_train_2, dir_train_3, dir_test, dir_add_1, dir_add_2, dir_add_3 = get_file_paths()
     print('got list dirs')
-    
+
+#   Lists of the image paths
     list_abspath_img_train_1 = get_list_abspath_img(dir_train_1)
+    train_1_labels = [1]*len(list_abspath_img_train_1)
     list_abspath_img_train_2 = get_list_abspath_img(dir_train_2)
+    train_2_labels = [2]*len(list_abspath_img_train_2)
     list_abspath_img_train_3 = get_list_abspath_img(dir_train_3)
+    train_3_labels = [3]*len(list_abspath_img_train_3)
     train_lists  = list_abspath_img_train_1 + list_abspath_img_train_2 + list_abspath_img_train_3
-    save_dirs(os.path.join(dir,'train.p'), train_lists)
-    #save_dirs('train.p', train_lists)
+    train_labels  = train_1_labels + train_2_labels + train_3_labels  
+
+#   Create/Save train df
+    t_dict = {'paths': pd.Series(train_lists),
+              'labels':pd.Series(train_labels)}
+    train_df = pd.DataFrame(t_dict)
+    save_dirs(os.path.join(dir,'train.csv'), train_lists, 'df')
     print('saved train dirs')
 
+#   Create/Save test df
     test_list = get_list_abspath_img(dir_test)
-    save_dirs(os.path.join(dir,'test.p'), test_list)
+    test_df = pd.DataFrame({'paths' : pd.Series(test_list)})
+    save_dirs(os.path.join(dir,'test.csv'), test_list, 'df')
     print('saved test dirs')
 
+#   Create/Save addtionals df
     list_abspath_img_add_1   = get_list_abspath_img(dir_add_1)
+    add_1_labels = [1]*len(list_abspath_img_add_1)
     list_abspath_img_add_2   = get_list_abspath_img(dir_add_2)
+    add_2_labels = [2]*len(list_abspath_img_add_2)
     list_abspath_img_add_3   = get_list_abspath_img(dir_add_3)
+    add_3_labels = [3]*len(list_abspath_img_add_3)
     add_lists = list_abspath_img_add_1   + list_abspath_img_add_2   + list_abspath_img_add_3
-    save_dirs(os.path.join(dir,'additionals.p'), add_lists)
+    add_labels = add_1_labels + add_2_labels + add_3_labels
+    add_dict = {'paths': pd.Series(add_lists),
+              'labels':pd.Series(add_labels)}
+    add_df = pd.DataFrame(add_dict)
+    save_dirs(os.path.join(dir,'additionals.csv'), add_d, 'df')
     print('saved additional dirs')
 
 # currently doesnt work
