@@ -7,16 +7,16 @@ import pandas as pd
 
 def get_file_paths():
     if 'c001' in platform.node(): 
-        # platform.node() => 'c001' or like 'c001-n030' on Colfax
+#   colfax cluster
         abspath_dataset_dir_train_1 = '/data/kaggle/train/Type_1'
         abspath_dataset_dir_train_2 = '/data/kaggle/train/Type_2'
         abspath_dataset_dir_train_3 = '/data/kaggle/train/Type_3'
         abspath_dataset_dir_test    = '/data/kaggle/test/'
-        abspath_dataset_dir_add_1   = '/data/kaggle/additional/Type_1'
-        abspath_dataset_dir_add_2   = '/data/kaggle/additional/Type_2'
-        abspath_dataset_dir_add_3   = '/data/kaggle/additional/Type_3'
+        abspath_dataset_dir_add_1   = '/data/kaggle_3.27/additional/Type_1_v2'
+        abspath_dataset_dir_add_2   = '/data/kaggle_3.27/additional/Type_2_v2'
+        abspath_dataset_dir_add_3   = '/data/kaggle_3.27/additional/Type_3_v2'
+#   local machine
     elif '.local' in platform.node():
-        # platform.node() => '*.local' on my local MacBook Air
         abspath_dataset_dir_train_1 = '/abspath/to/train/Type_1'
         abspath_dataset_dir_train_2 = '/abspath/to/train/Type_2'
         abspath_dataset_dir_train_3 = '/abspath/to/train/Type_3'
@@ -25,7 +25,7 @@ def get_file_paths():
         abspath_dataset_dir_add_2   = '/abspath/to/additional/Type_2'
         abspath_dataset_dir_add_3   = '/abspath/to/additional/Type_3'
     else:
-        # For kaggle's kernels environment (docker container?)
+#   kaggle kernel
         abspath_dataset_dir_train_1 = '/kaggle/input/train/Type_1'
         abspath_dataset_dir_train_2 = '/kaggle/input/train/Type_2'
         abspath_dataset_dir_train_3 = '/kaggle/input/train/Type_3'

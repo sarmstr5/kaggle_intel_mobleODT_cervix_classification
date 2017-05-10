@@ -67,15 +67,19 @@ def normalize_img(img):
 
 # worker function that does all the steps
 def process_img(img_fn, rgb=True):
-    if rgb:
-        img = load_rgb_img(img_fn)
+    if  not os.path.isfile(img_fn):
+        print('this file doesnt exist!:\n--------------\n{}'.format(img_path))
+
     else:
-        img = load_gry_img(img_fn)
-    img = orient_img(img)
-    img = resize_img_same_ratio(img)
-    img = normalize_img(img)
-    img = fill_img(img)
-    return img
+        if rgb:
+            img = load_rgb_img(img_fn)
+        else:
+            img = load_gry_img(img_fn)
+        img = orient_img(img)
+        img = resize_img_same_ratio(img)
+        img = normalize_img(img)
+        img = fill_img(img)
+        return img
 
 # not tested yet
 def processing_helper(img_list):
@@ -87,19 +91,22 @@ def processing_helper(img_list):
     return img_array
 
 def test_function(img_path):
-    print(os.path.isfile(img_path))
-    print(cv2.imread(img_path))
-    img = load_rgb_img(img_path)
-    plt.imshow(img)
-    plt.show()
+    # check if there is an error with the image
+    if  not os.path.isfile(img_path):
+        print('this file doesnt exist!:\n--------------\n{}'.format(img_path))
 
-    plt.imshow(orient_img(img))
-    plt.show()
+    else:
+        img = load_rgb_img(img_path)
+        plt.imshow(img)
+        plt.show()
 
-def process_images_parallel(fn):
-    dirs_df_dir = '~/kaggle_code/data/'
-    img_df = pd.read_csv(fn, header=0)
+        plt.imshow(orient_img(img))
+        plt.show()
+
+def process_images_parallel(dirs_df_dir, fn):
+    img_df = pd.read_csv(dirs_df_dir+fn+'.csv', header=0)
     img_paths = img_df['paths'].head()
+    print('created df')
     arr = processing_helper(img_paths)
     return arr
 
@@ -112,18 +119,16 @@ def main():
         dirs_df_dir = '~/kaggle_code/data/'
         print('in colfax cluster')
         if testing:
-            img_path = '/data/kaggle/test/5.jpg'
+            img_path = '/data/kaggle_3.27/test/5.jpg'
             test_function(img_path)
         else:
-            files = ('train', 'test', 'additionals')
+            files = ('train', 'test')
             for file in files:
-                img_df = pd.read_csv(dirs_df_dir+file+'.csv', header=0)
-                print('created df')
-                img_paths = img_df['paths']
-                print('running processing')
-                arr = processing_helper(img_paths)
+                dir = '~/kaggle_code/data/'
+                print('running {}'.format(file))
+                arr = process_images_parallel(dir, file)
                 print('saving fle')
-                np.save(dirs_df_dir+file+'_processed',arr)
+                np.save(dir+file+'_processed',arr)
 
     else:
         print("What are you doing out of the cluster?!")
