@@ -1,0 +1,5 @@
+['data_explore.py', 'processing_images.py', 'test_processing.py', 'starting_with_ResNet.py', 'starting_with_resnet.py', 'starting_with_keras.py', 'keras_processing.py', 'train.npy', 'train_target.npy', 'processing_images.pyc', '__pycache__', 'STDIN.o8731', 'starting_with_keras.py.o8732', 'STDIN.e8731', 'starting_with_keras.py.e8732', 'keras_script', "'", 'keras_script.sh', 'keras_script.sh.o9772', 'keras_script.sh.o9773', 'STDIN.o9774', 'STDIN.e9774', 'p_output.txt']
+in colfax cluster
+running train
+created df
+running processing
